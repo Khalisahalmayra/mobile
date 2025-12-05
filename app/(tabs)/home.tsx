@@ -1,7 +1,15 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  Image,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router"; // <- import useRouter
+import { useRouter } from "expo-router";
 
 const books = [
   {
@@ -31,30 +39,26 @@ const books = [
 ];
 
 export default function HomeScreen() {
-  const router = useRouter(); // <- inisialisasi router
+  const router = useRouter();
 
   return (
     <ScrollView style={styles.container}>
       {/* HEADER */}
       <View style={styles.header}>
-        {/* Hamburger */}
-        <TouchableOpacity style={styles.menuBtn}>
-          <Ionicons name="menu" size={28} />
-        </TouchableOpacity>
-
-        {/* Search Bar */}
+        {/* Search box only (menu removed) */}
         <View style={styles.searchBox}>
           <Ionicons name="search" size={20} />
           <TextInput placeholder="Search books..." style={styles.searchInput} />
         </View>
 
-        {/* Profile Photo */}
-        <TouchableOpacity 
-          style={styles.profileBox} 
-          onPress={() => router.push("/screens/ProfileScreen")} // navigasi ke Profile
+        <TouchableOpacity
+          style={styles.profileBox}
+          onPress={() => router.push("/(tabs)/profile")}
         >
           <Image
-            source={{ uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" }}
+            source={{
+              uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+            }}
             style={styles.profileImg}
           />
         </TouchableOpacity>
@@ -63,9 +67,8 @@ export default function HomeScreen() {
       {/* WELCOME BANNER */}
       <View style={styles.banner}>
         <Text style={styles.bannerText}>
-          Selamat datang! 
-          Kamu punya beberapa buku menarik untuk dijelajahi hari ini.
-          Yuk mulai menambah wawasanmu di Perpustakaan Starbhak.
+          Selamat datang! Kamu punya beberapa buku menarik untuk dijelajahi
+          hari ini. Yuk mulai menambah wawasanmu di Perpustakaan Starbhak.
         </Text>
 
         <TouchableOpacity style={styles.bannerBtn}>
@@ -82,14 +85,23 @@ export default function HomeScreen() {
         style={{ marginBottom: 20 }}
       >
         {books.map((book, i) => (
-          <View key={i} style={styles.bookCard}>
+          <TouchableOpacity
+            key={i}
+            style={styles.bookCard}
+            onPress={() =>
+              router.push({
+                pathname: "/screens/DetailScreen",
+                params: { book: JSON.stringify(book) },
+              })
+            }
+          >
             <Image source={{ uri: book.image }} style={styles.bookImage} />
             <Text style={styles.bookTitle}>{book.title}</Text>
             <View style={styles.categoryBox}>
               <Text style={styles.categoryText}>{book.category}</Text>
             </View>
             <Text style={styles.authorText}>by {book.author}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
       </ScrollView>
 
@@ -102,7 +114,9 @@ export default function HomeScreen() {
             Untukmu, Anak Bungsu — karya Hidya Hanin
           </Text>
           <Image
-            source={{ uri: "https://down-id.img.susercontent.com/file/id-11134207-7rbk0-m7653xtw4y3xe9" }}
+            source={{
+              uri: "https://down-id.img.susercontent.com/file/id-11134207-7rbk0-m7653xtw4y3xe9",
+            }}
             style={styles.comingImage}
           />
         </View>
@@ -112,26 +126,110 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", padding: 15 },
-  header: { flexDirection: "row", alignItems: "center", gap: 10 },
-  menuBtn: { marginTop: 8 },
-  searchBox: { flex: 1, flexDirection: "row", alignItems: "center", backgroundColor: "#eee", paddingHorizontal: 10, height: 45, borderRadius: 10 },
-  searchInput: { marginLeft: 10, flex: 1 },
+  // CONTAINER
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 15,
+  },
+
+  // HEADER
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+
+  searchBox: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#eee",
+    paddingHorizontal: 10,
+    height: 45,
+    borderRadius: 10,
+  },
+
+  searchInput: {
+    marginLeft: 10,
+    flex: 1,
+  },
+
   profileBox: { marginLeft: 5 },
-  profileImg: { width: 40, height: 40, borderRadius: 20, backgroundColor: "#ccc" },
-  banner: { backgroundColor: "#4c77ff", padding: 20, borderRadius: 12, marginTop: 20 },
-  bannerText: { color: "#fff", fontSize: 16, fontWeight: "bold", marginBottom: 15 },
-  bannerBtn: { backgroundColor: "#fff", paddingVertical: 10, borderRadius: 8, alignItems: "center" },
-  bannerBtnText: { color: "#4c77ff", fontWeight: "bold", fontSize: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginTop: 25, marginBottom: 10 },
+  profileImg: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#ccc",
+  },
+
+  // BANNER
+  banner: {
+    backgroundColor: "#4c77ff",
+    padding: 20,
+    borderRadius: 12,
+    marginTop: 20,
+  },
+  bannerText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 15,
+  },
+  bannerBtn: {
+    backgroundColor: "#fff",
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  bannerBtnText: {
+    color: "#4c77ff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+
+  // SECTION TITLE
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 25,
+    marginBottom: 10,
+  },
+
+  // BOOK CARD
   bookCard: { width: 110, marginRight: 12 },
   bookImage: { width: 110, height: 170, borderRadius: 10, backgroundColor: "#ccc" },
   bookTitle: { marginTop: 5, fontWeight: "600" },
-  categoryBox: { backgroundColor: "#4c77ff", paddingVertical: 3, paddingHorizontal: 8, borderRadius: 6, alignSelf: "flex-start", marginTop: 4 },
+  categoryBox: {
+    backgroundColor: "#4c77ff",
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+    alignSelf: "flex-start",
+    marginTop: 4,
+  },
   categoryText: { color: "#fff", fontSize: 12, fontWeight: "bold" },
   authorText: { marginTop: 4, color: "#444", fontSize: 13 },
-  comingSoonBanner: { backgroundColor: "#ffcc00", padding: 15, borderRadius: 12, marginBottom: 40, alignItems: "center" },
-  comingContent: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 },
-  comingText: { flex: 1, fontSize: 14, fontWeight: "bold", color: "#333" },
+
+  // COMING SOON
+  comingSoonBanner: {
+    backgroundColor: "#ffcc00",
+    padding: 15,
+    borderRadius: 12,
+    marginBottom: 40,
+    alignItems: "center",
+  },
+  comingContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  comingText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#333",
+  },
   comingImage: { width: 80, height: 110, borderRadius: 8 },
 });

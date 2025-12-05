@@ -1,19 +1,21 @@
 // screens/DetailScreen.js
 import React from "react";
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
-import { useRouter, useSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 
 export default function DetailScreen() {
   const router = useRouter();
-  const params = useSearchParams(); // ambil data dari query params
+  const params = useLocalSearchParams();
 
-  const book = {
-    image: params.image,
-    title: params.title,
-    category: params.category,
-    author: params.author,
-    description:
-      "Ini adalah deskripsi buku. Kamu bisa menambahkan ringkasan atau informasi penting tentang buku ini di sini.",
+  const book = params.book ? JSON.parse(params.book) : {
+    image: "https://cdn.gramedia.com/uploads/items/9789793062792_New-Edition-Laskar-Pelangi.jpg",
+    title: "Judul Buku",
+    author: "Penulis",
+    publisher: "Penerbit",
+    year: "Tahun",
+    category: "Kategori",
+    stock: 0,
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
   };
 
   return (
@@ -24,73 +26,157 @@ export default function DetailScreen() {
       </TouchableOpacity>
 
       {/* Cover Buku */}
-      <Image source={{ uri: book.image }} style={styles.bookImage} />
-
-      {/* Info Buku */}
-      <Text style={styles.title}>{book.title}</Text>
-      <View style={styles.categoryBox}>
-        <Text style={styles.categoryText}>{book.category}</Text>
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: book.image }} style={styles.bookImage} />
       </View>
-      <Text style={styles.authorText}>by {book.author}</Text>
 
+      {/* Judul */}
+      <Text style={styles.title}>{book.title}</Text>
+
+      {/* Tabel Info Buku */}
+      <View style={styles.table}>
+        <View style={styles.tableRow}>
+          <Text style={styles.tableKey}>Penulis</Text>
+          <Text style={styles.tableValue}>{book.author}</Text>
+        </View>
+        <View style={styles.tableRow}>
+          <Text style={styles.tableKey}>Penerbit</Text>
+          <Text style={styles.tableValue}>{book.publisher || "Gramedia"}</Text>
+        </View>
+        <View style={styles.tableRow}>
+          <Text style={styles.tableKey}>Tahun Terbit</Text>
+          <Text style={styles.tableValue}>{book.year || "2025"}</Text>
+        </View>
+        <View style={styles.tableRow}>
+          <Text style={styles.tableKey}>Kategori</Text>
+          <Text style={styles.tableValue}>{book.category}</Text>
+        </View>
+        <View style={styles.tableRow}>
+          <Text style={styles.tableKey}>Stok</Text>
+          <Text style={styles.tableValue}>{book.stock ?? 5}</Text>
+        </View>
+      </View>
+
+      {/* Deskripsi */}
       <Text style={styles.sectionTitle}>Deskripsi</Text>
-      <Text style={styles.description}>{book.description}</Text>
+      <Text style={styles.description}>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+      </Text>
+
+      {/* Tombol Wishlist dan Pinjam */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.wishlistBtn}>
+          <Text style={styles.buttonText}>Tambahkan Wishlist</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.borrowBtn}
+          onPress={() => router.push("/screens/PinjamScreen")} // Arahkan ke PinjamScreen
+        >
+          <Text style={styles.buttonText}>Pinjam Sekarang</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 15,
-    backgroundColor: "#fff",
+  // ================== CONTAINER ==================
+  container: { 
+    flex: 1, 
+    padding: 15, 
+    backgroundColor: "#fff" 
   },
-  backBtn: {
-    marginBottom: 10,
+
+  // ================== BACK BUTTON ==================
+  backBtn: { 
+    marginBottom: 10 
   },
-  backBtnText: {
-    color: "#1e90ff",
-    fontSize: 16,
-    fontWeight: "600",
+  backBtnText: { 
+    color: "#1e90ff", 
+    fontSize: 16, 
+    fontWeight: "600" 
   },
-  bookImage: {
-    width: "100%",
-    height: 300,
-    borderRadius: 12,
-    marginBottom: 15,
-    backgroundColor: "#ccc",
+
+  // ================== BOOK IMAGE ==================
+  imageContainer: { 
+    alignItems: "center", 
+    marginBottom: 15 
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    marginBottom: 5,
+  bookImage: { 
+    width: 150, 
+    height: 220, 
+    borderRadius: 8, 
+    backgroundColor: "#ccc" 
   },
-  categoryBox: {
-    backgroundColor: "#4c77ff",
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 6,
-    alignSelf: "flex-start",
-    marginBottom: 5,
+
+  // ================== TITLE ==================
+  title: { 
+    fontSize: 20, 
+    fontWeight: "bold", 
+    textAlign: "center", 
+    marginBottom: 15 
   },
-  categoryText: {
-    color: "#fff",
-    fontSize: 13,
-    fontWeight: "bold",
+
+  // ================== TABLE INFO ==================
+  table: { 
+    borderWidth: 1, 
+    borderColor: "#ccc", 
+    borderRadius: 8, 
+    marginBottom: 20 
   },
-  authorText: {
-    fontSize: 16,
-    color: "#444",
-    marginBottom: 15,
+  tableRow: { 
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    paddingVertical: 10, 
+    paddingHorizontal: 12, 
+    borderBottomWidth: 1, 
+    borderBottomColor: "#eee" 
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
+  tableKey: { 
+    fontWeight: "600", 
+    color: "#444" 
   },
-  description: {
-    fontSize: 15,
-    lineHeight: 22,
-    color: "#333",
+  tableValue: { 
+    color: "#555" 
   },
+
+  // ================== DESCRIPTION ==================
+  sectionTitle: { 
+    fontSize: 18, 
+    fontWeight: "bold", 
+    marginBottom: 8 
+  },
+  description: { 
+    fontSize: 14, 
+    lineHeight: 20, 
+    color: "#333", 
+    marginBottom: 20 
+  },
+
+  // ================== BUTTONS ==================
+  buttonContainer: { 
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    gap: 10, 
+    marginBottom: 30 
+  },
+  wishlistBtn: { 
+    flex: 1, 
+    backgroundColor: "#ffcc00", 
+    paddingVertical: 12, 
+    borderRadius: 8, 
+    alignItems: "center" 
+  },
+  borrowBtn: { 
+    flex: 1, 
+    backgroundColor: "#4c77ff", 
+    paddingVertical: 12, 
+    borderRadius: 8, 
+    alignItems: "center" 
+  },
+  buttonText: { 
+    color: "#fff", 
+    fontWeight: "bold", 
+    fontSize: 16 
+  }
 });

@@ -14,7 +14,7 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     // ga pake API, langsung masuk ke tabs/home
-    router.replace("/screens/HomeScreen");
+    router.replace("/(tabs)/home");
   };
 
   return (

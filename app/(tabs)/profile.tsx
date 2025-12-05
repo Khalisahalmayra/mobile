@@ -7,12 +7,13 @@ import {
   Image,
   StyleSheet,
   Alert,
+  Modal,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router"; // <- import useRouter
+import { useRouter } from "expo-router";
 
 export default function ProfileScreen() {
-  const router = useRouter(); // <- inisialisasi router
+  const router = useRouter();
 
   const [photo, setPhoto] = useState(
     "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
@@ -22,7 +23,9 @@ export default function ProfileScreen() {
   const [email, setEmail] = useState("andre@example.com");
   const [password, setPassword] = useState("12345678");
 
-  // Fungsi untuk pilih foto dari gallery
+  const [logoutModal, setLogoutModal] = useState(false); // <- state modal logout
+
+  // Pilih foto
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -42,27 +45,32 @@ export default function ProfileScreen() {
     }
   };
 
-  // Fungsi hapus foto
   const removePhoto = () => {
     setPhoto(
       "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
     );
   };
 
-  // Fungsi simpan perubahan (dummy)
   const saveProfile = () => {
     Alert.alert("Berhasil", "Data profile berhasil diperbarui!");
   };
 
+  // Fungsi logout
+  const handleLogout = () => {
+    setLogoutModal(false);
+    router.replace("/screens/LoginScreen"); // ARAHKAN KE HALAMAN LOGIN
+  };
+
   return (
     <View style={styles.container}>
-      {/* Back Button */}
+      {/* Back */}
       <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
         <Text style={styles.backBtnText}>← Kembali</Text>
       </TouchableOpacity>
 
-      {/* Photo Profile */}
+      {/* Foto */}
       <Image source={{ uri: photo }} style={styles.photo} />
+
       <View style={styles.photoButtons}>
         <TouchableOpacity style={styles.photoBtn} onPress={pickImage}>
           <Text style={styles.photoBtnText}>Ubah Foto</Text>
@@ -75,7 +83,7 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Form Profile */}
+      {/* Form */}
       <TextInput
         style={styles.input}
         value={nama}
@@ -103,27 +111,74 @@ export default function ProfileScreen() {
         secureTextEntry
       />
 
+      {/* Tombol Simpan */}
       <TouchableOpacity style={styles.saveBtn} onPress={saveProfile}>
         <Text style={styles.saveBtnText}>Simpan Perubahan</Text>
       </TouchableOpacity>
+
+      {/* Tombol Logout */}
+      <TouchableOpacity
+        style={styles.logoutBtn}
+        onPress={() => setLogoutModal(true)}
+      >
+        <Text style={styles.logoutBtnText}>Logout</Text>
+      </TouchableOpacity>
+
+      {/* MODAL LOGOUT */}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={logoutModal}
+        onRequestClose={() => setLogoutModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Konfirmasi Logout</Text>
+            <Text style={styles.modalDesc}>
+              Apakah kamu yakin ingin keluar akun?
+            </Text>
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalBtn, { backgroundColor: "#ccc" }]}
+                onPress={() => setLogoutModal(false)}
+              >
+                <Text style={styles.modalBtnText}>Batal</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.modalBtn, { backgroundColor: "#ff4d4d" }]}
+                onPress={handleLogout}
+              >
+                <Text style={[styles.modalBtnText, { color: "#fff" }]}>
+                  Logout
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
+  container: { 
+    flex: 1, 
+    padding: 20, 
+    backgroundColor: "#fff" 
   },
-  backBtn: {
-    marginBottom: 10,
+
+  backBtn: { 
+    marginBottom: 10 
   },
-  backBtnText: {
-    color: "#1e90ff",
-    fontSize: 16,
-    fontWeight: "600",
+
+  backBtnText: { 
+    color: "#1e90ff", 
+    fontSize: 16, 
+    fontWeight: "600" 
   },
+
   photo: {
     width: 120,
     height: 120,
@@ -132,11 +187,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: "#ccc",
   },
-  photoButtons: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 20,
+
+  photoButtons: { 
+    flexDirection: "row", 
+    justifyContent: "center", 
+    marginBottom: 20 
   },
+
   photoBtn: {
     backgroundColor: "#1e90ff",
     paddingVertical: 8,
@@ -144,10 +201,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginHorizontal: 5,
   },
-  photoBtnText: {
-    color: "#fff",
-    fontWeight: "600",
+
+  photoBtnText: { 
+    color: "#fff", 
+    fontWeight: "600" 
   },
+
   input: {
     borderWidth: 1,
     borderColor: "#aaa",
@@ -156,6 +215,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 16,
   },
+
   saveBtn: {
     backgroundColor: "#000",
     padding: 16,
@@ -163,9 +223,70 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 10,
   },
-  saveBtnText: {
+
+  saveBtnText: { 
+    color: "#fff", 
+    fontSize: 16, 
+    fontWeight: "600" 
+  },
+
+  /* Logout */
+  logoutBtn: {
+    backgroundColor: "#ff4d4d",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 15,
+  },
+
+  logoutBtnText: {
     color: "#fff",
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: "700",
+  },
+
+  /* Modal */
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  modalBox: {
+    width: "80%",
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    elevation: 5,
+  },
+
+  modalTitle: { 
+    fontSize: 18, 
+    fontWeight: "700", 
+    marginBottom: 10 
+  },
+
+  modalDesc: { 
+    fontSize: 14, 
+    color: "#555", 
+    marginBottom: 20 
+  },
+
+  modalButtons: { 
+    flexDirection: "row", 
+    justifyContent: "space-between" 
+  },
+
+  modalBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginHorizontal: 5,
+    alignItems: "center",
+  },
+  modalBtnText: { 
+    fontSize: 16, 
+    fontWeight: "600" 
   },
 });
